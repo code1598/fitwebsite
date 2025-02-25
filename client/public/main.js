@@ -1,47 +1,48 @@
-// Original JavaScript for menu and animations remains the same
+// Mobile Menu Toggle
+const menuBtn = document.getElementById("menu-btn");
+const navLinks = document.getElementById("nav-links");
+const menuBtnIcon = menuBtn.querySelector("i");
+
+menuBtn.addEventListener("click", () => {
+  navLinks.classList.toggle("open");
+  const isOpen = navLinks.classList.contains("open");
+  menuBtnIcon.setAttribute("class", isOpen ? "ri-close-line" : "ri-menu-line");
+});
+
+// Close menu when clicking on a link
+navLinks.addEventListener("click", () => {
+  navLinks.classList.remove("open");
+  menuBtnIcon.setAttribute("class", "ri-menu-line");
+});
+
 
 // Auth Modal Functionality
 const loginBtn = document.getElementById("login-btn");
 const registerBtn = document.getElementById("register-btn");
 const authModal = document.getElementById("auth-modal");
-const loginForm = document.getElementById("login-form");
-const registerForm = document.getElementById("register-form");
-const closeBtns = document.getElementsByClassName("close");
+const authTabs = document.querySelectorAll(".auth-tab");
+const authForms = document.querySelectorAll(".auth-form");
+const loginForm = document.getElementById("loginForm");
+const registerForm = document.getElementById("registerForm");
 
-loginBtn.onclick = () => {
-  authModal.style.display = "block";
-  loginForm.style.display = "block";
-  registerForm.style.display = "none";
-}
+// Tab switching
+authTabs.forEach(tab => {
+  tab.addEventListener("click", () => {
+    const targetForm = tab.dataset.tab;
 
-registerBtn.onclick = () => {
-  authModal.style.display = "block";
-  loginForm.style.display = "none";
-  registerForm.style.display = "block";
-}
+    authTabs.forEach(t => t.classList.remove("active"));
+    authForms.forEach(f => f.classList.remove("active"));
 
-// Close modal functionality
-Array.from(closeBtns).forEach(btn => {
-  btn.onclick = function() {
-    authModal.style.display = "none";
-    bmiModal.style.display = "none";
-  }
+    tab.classList.add("active");
+    document.getElementById(`${targetForm}-form`).classList.add("active");
+  });
 });
 
-window.onclick = function(event) {
-  if (event.target == authModal) {
-    authModal.style.display = "none";
-  }
-  if (event.target == bmiModal) {
-    bmiModal.style.display = "none";
-  }
-}
-
-// Login Form Submission
-document.getElementById("loginForm").onsubmit = async (e) => {
+// Form submissions
+loginForm.onsubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
-  
+
   try {
     const response = await fetch('/api/login', {
       method: 'POST',
@@ -55,10 +56,8 @@ document.getElementById("loginForm").onsubmit = async (e) => {
     });
 
     if (response.ok) {
-      const user = await response.json();
-      localStorage.setItem('user', JSON.stringify(user));
       authModal.style.display = "none";
-      updateUIForLoggedInUser();
+      window.location.reload();
     } else {
       alert('Login failed. Please check your credentials.');
     }
@@ -68,11 +67,10 @@ document.getElementById("loginForm").onsubmit = async (e) => {
   }
 };
 
-// Register Form Submission
-document.getElementById("registerForm").onsubmit = async (e) => {
+registerForm.onsubmit = async (e) => {
   e.preventDefault();
   const formData = new FormData(e.target);
-  
+
   try {
     const response = await fetch('/api/register', {
       method: 'POST',
@@ -86,10 +84,8 @@ document.getElementById("registerForm").onsubmit = async (e) => {
     });
 
     if (response.ok) {
-      const user = await response.json();
-      localStorage.setItem('user', JSON.stringify(user));
       authModal.style.display = "none";
-      updateUIForLoggedInUser();
+      window.location.reload();
     } else {
       alert('Registration failed. Username might be taken.');
     }
@@ -99,56 +95,93 @@ document.getElementById("registerForm").onsubmit = async (e) => {
   }
 };
 
+loginBtn.onclick = () => {
+  authModal.style.display = "block";
+  loginForm.classList.add("active");
+  registerForm.classList.remove("active");
+};
+
+registerBtn.onclick = () => {
+  authModal.style.display = "block";
+  loginForm.classList.remove("active");
+  registerForm.classList.add("active");
+};
+
+
 // BMI Calculator Modal
 const bmiModal = document.getElementById("bmi-modal");
+const bmiForm = document.getElementById("bmiForm");
 const bmiResult = document.getElementById("bmi-result");
+const bmiCalculatorBtn = document.getElementById("bmi-calculator-btn");
 
-document.getElementById("bmiForm").onsubmit = async (e) => {
+bmiCalculatorBtn.onclick = () => {
+  bmiModal.style.display = "block";
+};
+
+bmiForm.onsubmit = async (e) => {
   e.preventDefault();
-  const formData = new FormData(e.target);
-  const height = formData.get('height') / 100; // Convert cm to meters
-  const weight = formData.get('weight');
-  
-  const bmi = weight / (height * height);
-  const bmiValue = bmi.toFixed(1);
-  
-  let category, className;
-  if (bmi < 18.5) {
-    category = "Underweight";
-    className = "bmi-warning";
-  } else if (bmi < 25) {
-    category = "Normal weight";
-    className = "bmi-normal";
-  } else if (bmi < 30) {
-    category = "Overweight";
-    className = "bmi-warning";
-  } else {
-    category = "Obese";
-    className = "bmi-danger";
-  }
+  const height = Number(e.target.height.value) / 100; // Convert to meters
+  const weight = Number(e.target.weight.value);
 
-  bmiResult.innerHTML = `Your BMI is ${bmiValue} (${category})`;
-  bmiResult.className = className;
+  if (height > 0 && weight > 0) {
+    const bmi = weight / (height * height);
+    const bmiValue = bmi.toFixed(1);
 
-  // If user is logged in, save BMI data
-  const user = JSON.parse(localStorage.getItem('user'));
-  if (user) {
+    let category, className;
+    if (bmi < 18.5) {
+      category = "Underweight";
+      className = "bmi-warning";
+    } else if (bmi < 25) {
+      category = "Normal weight";
+      className = "bmi-normal";
+    } else if (bmi < 30) {
+      category = "Overweight";
+      className = "bmi-warning";
+    } else {
+      category = "Obese";
+      className = "bmi-danger";
+    }
+
+    bmiResult.textContent = `Your BMI is ${bmiValue} (${category})`;
+    bmiResult.className = className;
+
+    // If user is logged in, save BMI data
     try {
-      await fetch('/api/user/stats', {
+      const response = await fetch('/api/user/stats', {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          height: formData.get('height'),
-          weight: formData.get('weight'),
+          height: height * 100, // Convert back to cm for storage
+          weight: weight
         }),
       });
+      if (!response.ok) {
+        console.log('Failed to save BMI data');
+      }
     } catch (error) {
       console.error('Error saving BMI data:', error);
     }
   }
 };
+
+// Close modals when clicking outside
+window.onclick = (event) => {
+  if (event.target === bmiModal) {
+    bmiModal.style.display = "none";
+  }
+  if (event.target === authModal) {
+    authModal.style.display = "none";
+  }
+};
+
+// Close button functionality
+document.querySelectorAll(".close").forEach(closeBtn => {
+  closeBtn.onclick = function() {
+    this.closest(".modal").style.display = "none";
+  };
+});
 
 // Update UI based on authentication state
 function updateUIForLoggedInUser() {
@@ -160,7 +193,7 @@ function updateUIForLoggedInUser() {
     const logoutBtn = document.createElement('li');
     logoutBtn.innerHTML = '<a href="#" id="logout-btn">LOGOUT</a>';
     document.getElementById('nav-links').appendChild(logoutBtn);
-    
+
     logoutBtn.onclick = async () => {
       try {
         await fetch('/api/logout', { method: 'POST' });
@@ -175,3 +208,34 @@ function updateUIForLoggedInUser() {
 
 // Check authentication state on page load
 updateUIForLoggedInUser();
+
+// ScrollReveal animations
+const scrollRevealOption = {
+  distance: "50px",
+  origin: "bottom",
+  duration: 1000,
+};
+
+ScrollReveal().reveal(".header__content h1", scrollRevealOption);
+ScrollReveal().reveal(".header__content h2", {
+  ...scrollRevealOption,
+  delay: 500,
+});
+ScrollReveal().reveal(".header__content p", {
+  ...scrollRevealOption,
+  delay: 1000,
+});
+ScrollReveal().reveal(".header__btn", {
+  ...scrollRevealOption,
+  delay: 1500,
+});
+
+ScrollReveal().reveal(".about__card", {
+  duration: 1000,
+  interval: 500,
+});
+
+ScrollReveal().reveal(".session__card", {
+  ...scrollRevealOption,
+  interval: 500,
+});
