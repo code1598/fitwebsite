@@ -1,0 +1,117 @@
+// Toggle mobile menu
+const menuBtn = document.getElementById("menu-btn");
+const navLinks = document.getElementById("nav-links");
+const menuBtnIcon = menuBtn.querySelector("i");
+
+menuBtn.addEventListener("click", (e) => {
+  navLinks.classList.toggle("open");
+
+  const isOpen = navLinks.classList.contains("open");
+  menuBtnIcon.setAttribute("class", isOpen ? "ri-close-line" : "ri-menu-line");
+});
+
+navLinks.addEventListener("click", (e) => {
+  navLinks.classList.remove("open");
+  menuBtnIcon.setAttribute("class", "ri-menu-line");
+});
+
+// ScrollReveal animations
+const scrollRevealOption = {
+  distance: "50px",
+  origin: "bottom",
+  duration: 1000,
+};
+
+ScrollReveal().reveal(".header__content h1", {
+  ...scrollRevealOption,
+});
+ScrollReveal().reveal(".header__content h2", {
+  ...scrollRevealOption,
+  delay: 500,
+});
+ScrollReveal().reveal(".header__content p", {
+  ...scrollRevealOption,
+  delay: 1000,
+});
+ScrollReveal().reveal(".header__content .header__btn", {
+  ...scrollRevealOption,
+  delay: 1500,
+});
+
+ScrollReveal().reveal(".about__card", {
+  duration: 1000,
+  interval: 500,
+});
+
+ScrollReveal().reveal(".trainer__card", {
+  ...scrollRevealOption,
+  interval: 500,
+});
+
+ScrollReveal().reveal(".blog__card", {
+  ...scrollRevealOption,
+  interval: 500,
+});
+
+// Swiper initialization
+const swiper = new Swiper(".swiper", {
+  loop: true,
+  pagination: {
+    el: ".swiper-pagination",
+  },
+});
+
+// Exercise content display logic
+const exerciseContent = document.getElementById("exercise-content");
+const exerciseTitle = document.getElementById("exercise-title");
+const exerciseGrid = document.getElementById("exercise-grid");
+
+const exercises = {
+  "BODY BUILDING": [
+    { name: "Bench Press", description: "A compound exercise that targets the chest, shoulders, and triceps." },
+    { name: "Deadlift", description: "A full-body exercise that primarily targets the lower back, glutes, and hamstrings." },
+    { name: "Squat", description: "A lower-body exercise that targets the quads, hamstrings, and glutes." },
+  ],
+  "CARDIO": [
+    { name: "Running", description: "A great way to improve cardiovascular health and burn calories." },
+    { name: "Cycling", description: "A low-impact cardio exercise that strengthens the legs and improves endurance." },
+    { name: "Jump Rope", description: "An effective cardio workout that improves coordination and burns calories quickly." },
+  ],
+  "FITNESS": [
+    { name: "Push-ups", description: "A bodyweight exercise that targets the chest, shoulders, and triceps." },
+    { name: "Pull-ups", description: "An upper-body exercise that targets the back, shoulders, and arms." },
+    { name: "Plank", description: "A core-strengthening exercise that improves stability and endurance." },
+  ],
+  "CROSSFIT": [
+    { name: "Burpees", description: "A full-body exercise that combines a squat, push-up, and jump." },
+    { name: "Kettlebell Swings", description: "A dynamic exercise that targets the hips, glutes, and core." },
+    { name: "Box Jumps", description: "A plyometric exercise that improves explosive power and leg strength." },
+  ],
+};
+
+// Add event listeners to "Read More" buttons
+document.querySelectorAll(".session__card button").forEach((button) => {
+  button.addEventListener("click", function () {
+    const category = this.parentElement.querySelector("h4").textContent;
+    exerciseTitle.textContent = category;
+    exerciseGrid.innerHTML = ""; // Clear previous content
+
+    // Populate exercise grid with exercises for the selected category
+    exercises[category].forEach((exercise) => {
+      const exerciseCard = document.createElement("div");
+      exerciseCard.classList.add("exercise__card");
+      exerciseCard.innerHTML = `
+        <h4>${exercise.name}</h4>
+        <p>${exercise.description}</p>
+      `;
+      exerciseGrid.appendChild(exerciseCard);
+    });
+
+    // Show the exercise section and scroll to it
+    exerciseContent.style.display = "block";
+    window.scrollTo({
+      top: exerciseContent.offsetTop,
+      behavior: "smooth",
+    });
+  });
+});
