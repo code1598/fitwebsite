@@ -239,3 +239,146 @@ ScrollReveal().reveal(".session__card", {
   ...scrollRevealOption,
   interval: 500,
 });
+
+// Add program content data
+const programContent = {
+  strength: {
+    title: "Strength Training Program",
+    exercises: [
+      {
+        name: "Bench Press",
+        sets: "4 sets",
+        reps: "8-12 reps",
+        description: "Compound exercise targeting chest, shoulders, and triceps"
+      },
+      {
+        name: "Deadlift",
+        sets: "4 sets",
+        reps: "6-8 reps",
+        description: "Full body exercise focusing on back and legs"
+      },
+      {
+        name: "Squats",
+        sets: "4 sets",
+        reps: "8-12 reps",
+        description: "Lower body compound exercise"
+      }
+    ]
+  },
+  cardio: {
+    title: "Cardio Fitness Program",
+    exercises: [
+      {
+        name: "HIIT Intervals",
+        sets: "5 rounds",
+        reps: "30 sec work/30 sec rest",
+        description: "High-intensity cardio intervals"
+      },
+      {
+        name: "Running",
+        sets: "1 set",
+        reps: "30 minutes",
+        description: "Steady-state cardio training"
+      },
+      {
+        name: "Jump Rope",
+        sets: "3 sets",
+        reps: "2 minutes each",
+        description: "High-intensity cardio conditioning"
+      }
+    ]
+  },
+  flexibility: {
+    title: "Flexibility Training Program",
+    exercises: [
+      {
+        name: "Dynamic Stretching",
+        sets: "2 rounds",
+        reps: "10 reps each",
+        description: "Full body mobility warm-up"
+      },
+      {
+        name: "Yoga Flow",
+        sets: "1 set",
+        reps: "20 minutes",
+        description: "Flexibility and balance training"
+      },
+      {
+        name: "Static Stretching",
+        sets: "1 set",
+        reps: "30 sec holds",
+        description: "Post-workout flexibility routine"
+      }
+    ]
+  },
+  "weight-loss": {
+    title: "Weight Loss Program",
+    exercises: [
+      {
+        name: "Circuit Training",
+        sets: "3 rounds",
+        reps: "45 sec work/15 sec rest",
+        description: "Full body circuit for fat loss"
+      },
+      {
+        name: "Metabolic Conditioning",
+        sets: "4 sets",
+        reps: "10-15 reps each",
+        description: "High-intensity fat burning workout"
+      },
+      {
+        name: "Cardio Intervals",
+        sets: "6 rounds",
+        reps: "1 min work/30 sec rest",
+        description: "Interval training for weight loss"
+      }
+    ]
+  }
+};
+
+// Add click handlers for program buttons
+document.querySelectorAll('.view-program').forEach(button => {
+  button.addEventListener('click', () => {
+    const programType = button.dataset.program;
+    const program = programContent[programType];
+
+    // Create modal content
+    const modal = document.createElement('div');
+    modal.className = 'modal';
+    modal.innerHTML = `
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>${program.title}</h2>
+        <div class="program-exercises">
+          ${program.exercises.map(exercise => `
+            <div class="exercise-item">
+              <h3>${exercise.name}</h3>
+              <p><strong>Sets:</strong> ${exercise.sets}</p>
+              <p><strong>Reps:</strong> ${exercise.reps}</p>
+              <p>${exercise.description}</p>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    `;
+
+    // Add modal to page
+    document.body.appendChild(modal);
+    modal.style.display = 'block';
+
+    // Add close functionality
+    const closeBtn = modal.querySelector('.close');
+    closeBtn.onclick = () => {
+      modal.style.display = 'none';
+      modal.remove();
+    };
+
+    // Close on outside click
+    window.onclick = (event) => {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+        modal.remove();
+      }
+    };
+  });
+});

@@ -255,6 +255,8 @@ nav {
   max-width: 500px;
   border-radius: 10px;
   position: relative;
+  max-height: 80vh;
+  overflow-y: auto;
 }
 
 .close {
@@ -369,4 +371,41 @@ nav {
   .session {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* Add to the existing styles */
+
+.program-exercises {
+  margin-top: 2rem;
+}
+
+.exercise-item {
+  padding: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid var(--extra-light);
+  border-radius: 5px;
+}
+
+.exercise-item h3 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-family: var(--header-font);
+}
+
+.exercise-item p {
+  margin: 0.5rem 0;
+  color: var(--text-light);
+}
+
+.exercise-item strong {
+  color: var(--text-dark);
+}
+
+/* Update modal styles */
+.modal-content h2 {
+  color: var(--text-dark);
+  font-family: var(--header-font);
+  margin-bottom: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--extra-light);
 }
